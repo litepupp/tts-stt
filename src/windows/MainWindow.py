@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.udp_client = udp_client.SimpleUDPClient("localhost", 9000)
+        self.udp_client = udp_client.SimpleUDPClient("127.0.0.1", 9000)
 
         self.ui.send_button.clicked.connect(self.handle_send)
         self.ui.message_field.textChanged.connect(self.handle_text_changed)
