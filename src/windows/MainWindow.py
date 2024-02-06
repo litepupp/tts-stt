@@ -4,6 +4,8 @@
 
 import datetime
 
+import PyQt5.QtCore
+from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QMainWindow
 from pythonosc import udp_client
 
@@ -26,15 +28,17 @@ class MainWindow(QMainWindow):
         self.osc_client = udp_client.SimpleUDPClient("127.0.0.1", 9000)
 
         self.ui.send_button.clicked.connect(self.handle_send)
-        self.ui.message_field.textChanged.connect(self.handle_text_changed)
 
-    def handle_text_changed(self):
-        """
-        ...
-        """
-        pass
+        self.ui.message_field.installEventFilter(self)
 
-    def handle_send(self):
+        self.ui.language_selector.currentIndexChanged.connect(
+            self.handle_language_change
+        )
+
+    def handle_language_change(self) -> None:
+        print("selection changed")
+
+    def handle_send(self) -> None:
         """
         ...
         """
@@ -48,3 +52,19 @@ class MainWindow(QMainWindow):
         self.ui.log_field.appendHtml(f'<font color="gray">[{date}]:</font> {message}')
         self.ui.message_field.clear()
         self.ui.message_field.setFocus()
+
+    def eventFilter(self, obj, event):
+        """
+        ...
+        """
+        if (
+            event.type() == PyQt5.QtCore.QEvent.KeyPress
+            and obj is self.ui.message_field
+        ):
+            key_pressed = event.key()
+
+            if key_pressed == PyQt5.QtCore.Qt.Key_Return:
+                self.handle_send()
+                return True
+
+        return False
